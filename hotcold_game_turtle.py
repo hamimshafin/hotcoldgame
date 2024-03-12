@@ -316,7 +316,7 @@ def setup_game():
     s.bgcolor('black')          # set the window's background color which is the came color as the hidden circle
 
     # try to get the user's choice for the size of the cirle and the size of the movement
-    # if the user closes the the inputs without entering a valid value
+    # if the user closes the inputs without entering a valid value
     # then set the default sizes both to 50
     try:
         circle_size = int(turtle.numinput('Circle', '"Size of circles (10-100)', minval=10, maxval=100))
