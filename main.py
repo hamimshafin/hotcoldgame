@@ -76,7 +76,7 @@ def play_game():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run_me = False
+                True = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     pos_x -= 10
