@@ -108,7 +108,7 @@ def set_difficulty(level, difficulty):
 
 # Function to display the menu
 def display_menu():
-    menu = pygame.menu.Menu('Hot/Cold Game', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
+    menu = pygame_menu.Menu('Hot/Cold Game', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
     menu.add.selector('Difficulty :', [('Level 1', 1), ('Level 2', 2), ('Level 3', 3)], onchange=set_difficulty)
     menu.add.button('Play', play_game)
     menu.add.button('Quit', pygame_menu.events.EXIT)
