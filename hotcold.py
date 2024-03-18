@@ -1,7 +1,7 @@
 import math
 import sys
 import pygame
-import pygame.menu
+import pygame_menu
 import random
 
 # Define colors
@@ -108,16 +108,18 @@ def set_difficulty(level, difficulty):
 
 # Function to display the menu
 def display_menu():
-    menu = pygame.menu.Menu('Hot/Cold Game', 400, 300, theme=pygame.menu.themes.THEME_BLUE)
+    menu = pygame.menu.Menu('Hot/Cold Game', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
     menu.add.selector('Difficulty :', [('Level 1', 1), ('Level 2', 2), ('Level 3', 3)], onchange=set_difficulty)
     menu.add.button('Play', play_game)
-    menu.add.button('Quit', pygame.menu.events.EXIT)
+    menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(SCREEN)
+
 
 # Main function
 def main():
     pygame.init()
     display_menu()
+    pygame.time.delay(1000)
     pygame.quit()
 
 if __name__ == "__main__":
