@@ -70,23 +70,33 @@ def play_game():
     """..."""
     global game
 
+    running = True
+
+
     while True:
         clock.tick(fps_limit)
 
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                True = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    pos_x -= 10
+                running = False
 
-                if event.key == pygame.K_RIGHT:
-                    posx += 10
 
-                if event.key == pygame.K_UP:
-                    posy += 10
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                posx -= 10
 
-                if event.key == pygame.K_DOWN:
-                    posy -=10
+            if event.key == pygame.K_RIGHT:
+                posx += 10
 
+            if event.key == pygame.K_UP:
+                posy += 10
+
+            if event.key == pygame.K_DOWN:
+                posy -=10
+
+        screen.fill(black)
+
+        pygame.draw.circle(screen,colorcircle, (posx,posy), 50)
+          pygame.display.flip()
+    pygame.quit()
