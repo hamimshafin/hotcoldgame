@@ -119,7 +119,6 @@ def display_menu():
 def main():
     pygame.init()
     display_menu()
-    pygame.time.delay(1000)
     pygame.quit()
 
 if __name__ == "__main__":
