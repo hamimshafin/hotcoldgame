@@ -1,5 +1,8 @@
-import os, sys, math, pygame, pygame.mixer
-from pygame.locals import *
+import math
+import sys
+import pygame
+import pygame.mixer
+import pygame.menu
 import random
 
 black = (0, 0, 0)
@@ -13,58 +16,6 @@ screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption('Hot Cold Game')
 
 fps_limit = 60
-
-# circle
-user_colorcircle = (red)
-user_posx = 300
-user_posy = 200
-circle = pygame.draw.circle(screen, user_colorcircle, (user_posx, user_posy), 50)
-
-# Hidden circle
-hidden_colorcircle = white
-hidden_posx = 500
-hidden_posy = 100
-
-
-def play_game():
-    global user_posy, user_posx
-
-    clock = pygame.time.Clock()
-
-    run_me = True
-
-    while run_me:
-        clock.tick(fps_limit)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run_me = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    user_posx -= 10
-
-                if event.key == pygame.K_RIGHT:
-                    user_posx += 10
-
-                if event.key == pygame.K_UP:
-                    user_posy -= 10
-
-                if event.key == pygame.K_DOWN:
-                    user_posy += 10
-
-                if event.key == pygame.K_r:
-                    # Reset hidden circle location
-                    set_hidden_location()
-
-        # fill the screen with black (otherwise, the circle will leave a trail)
-        screen.fill(black)
-        # redraw the circle
-        pygame.draw.circle(screen, user_colorcircle, (user_posx, user_posy), 50)
-        pygame.draw.circle(screen, hidden_colorcircle, (hidden_posx, hidden_posy), 50)
-        pygame.display.flip()
-
-
-# game data that never changes
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -89,7 +40,62 @@ game = {
     'user_color': WHITE,
     'hidden_color': BLACK,
     'num_moves': 0
+
 }
+
+
+def play_game():
+    global game
+
+    clock = pygame.time.Clock()
+    run_game = True
+
+    while run_game:
+        clock.tick(fps_limit)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run_game = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    game['user_posx'] -= 10
+                elif event.key == pygame.K_RIGHT:
+                    game['user_posx'] += 10
+                elif event.key == pygame.K_UP:
+                    game['user_posy'] -= 10
+                elif event.key == pygame.K_DOWN:
+                    game['user_posy'] += 10
+                elif event.key == pygame.K_r:
+                    # Reset hidden circle location
+                    set_hidden_location()
+                    # Reset user circle color
+                    game['user_circle_color'] = blue
+
+        # Calculate the distance between the user's circle and the hidden circle
+        distance = math.sqrt((game['user_posx'] - game['hidden_posx']) ** 2 + (game['user_posy'] - game['hidden_posy']) ** 2)
+
+        # Adjust user's circle color based on distance from the hidden circle
+        if distance < 100:
+            game['user_circle_color'] = red
+        elif distance < game['circle_size']:
+            game['user_circle_color'] = green
+        else:
+            game['user_circle_color'] = blue
+
+        # Fill the screen with black
+        screen.fill(black)
+
+        # Draw circles
+        pygame.draw.circle(screen, game['user_circle_color'], (game['user_posx'], game['user_posy']), game['circle_size'])
+        pygame.draw.circle(screen, game['hidden_circle_color'], (game['hidden_posx'], game['hidden_posy']), game['circle_size'])
+
+        pygame.display.flip()
+
+
+
+
+
+
 
 
 def set_hidden_location():
@@ -119,6 +125,7 @@ def set_hidden_location():
 
 
 def debug():
+    global game
     # initialising pygame
     pygame.init()
 
@@ -142,13 +149,47 @@ def debug():
                 print("A key has been pressed")
 
 
+def display_instructions():
+    font = pygame.font.SysFont(None, 24)
+
+    line = font.render('# ' + str(game['num_moves']) + "moves", True, YELLOW)
+    SCREEN.blit(line, (20, 20))
+
+    # display debug mode
+    debug_text = font.render('Debug: d', True, YELLOW)
+    SCREEN.blit(debug_text, (20, 40))
+
+    # Display reset instruction
+    reset_text = font.render('Reset : r', True, YELLOW)
+    SCREEN.blit(reset_text, 20, 60)
+
+
+def set_difficulty(level, difficulty):
+    global game
+
+    if difficulty == 3:
+        game['circle_size'], game['move_size'] = (10, 10)
+    elif difficulty == 2:
+        game['circle_size'], game['move_size'] = (25, 25)
+    else:
+        game['circle_size'], game['move_size'] = (50, 50)
+
+
+def display_menu():
+    menu = pygame.menu.Menu('Hot/Cold Game', 400, 300, theme=pygame.menu.themes.THEME_BLUE)
+    menu.add.selector('Difficulty :', [('Level 1', 1), ('Level 2', 2), ('Level 3', 3)], onchange=set_difficulty)
+    menu.add.button('Play', play_game)  # call play_game function
+    menu.add.button('Quit', pygame.menu.events.EXIT)
+    menu.mainloop(SCREEN)
+
+
 def main():
     pygame.init()
     pygame.display.set_caption('Hot Cold Game')
 
-    play_game()
-    debug()
+    display_menu()
     pygame.quit()
+
 
 
 if __name__ == "__main__":

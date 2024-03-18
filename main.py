@@ -1,102 +1,97 @@
 import pygame
 import random
-from pygame.locals import *
+import math
 
-# global variables used to control the game
-s = None           # used to configure the screen
-t = None           # pen used to draw the circles and text on the screen
-num_moves = 0      # running total of the number of moves to find the hidden circle
-circle_size = 100  # set the difficulty of the game by the size of the circles
-move_size = 100    # set the difficulty of the game by the size of the circles
-
-# previous location of the user's circle used to determine if the user is getting closer or further away
-previous_x = 0
-previous_y = 0
-
-
-# current location of the user's circle
-x = 0  # start at the center of screen and used to move right (+) or left (-)
-y = 0  # start at the center of screen and used to move up (+) or down (-)
-
-# used to control the hidden circle location
-hidden_x = 0  # from the center of the screen right (+) left (-)
-hidden_y = 0  # from the center of the screen up (+) down (-)
-
-user_color = 'blue'     # the color of the user's circle: (closer) cold=blue, (further) hot=red
-hidden_color = 'black'  # the default for the hidden circle is black to match the screen background color
-
-BLACK = (0,0,0)
-RED = (255,0,0)
-GREEN = (0,255,0)
+# Define colors
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
-WHITE = (255,255,255)
-YELLOW = (255, 233, 0)
+WHITE = (255, 255, 255)
 
+# Initialize pygame
+pygame.init()
 
-SCREEN_SIZE = 800
-SCREEN = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
+# Set up the screen
+SCREEN_SIZE = (800, 600)
+screen = pygame.display.set_mode(SCREEN_SIZE)
+pygame.display.set_caption('Hot Cold Game')
 
+# Set up the clock
 clock = pygame.time.Clock()
 fps_limit = 60
 
-#circle
-user_color = (WHITE)
-hidden_color = (BLACK)
+# Game data
+user_pos = [SCREEN_SIZE[0] // 2, SCREEN_SIZE[1] // 2]
+hidden_pos = [random.randint(50, SCREEN_SIZE[0] - 50), random.randint(50, SCREEN_SIZE[1] - 50)]
+circle_size = 50
+user_color = RED
 
-user_posx = 300
-user_posy = 200
+# Function to reset hidden circle location
+def set_hidden_location():
+    hidden_pos[0] = random.randint(50, SCREEN_SIZE[0] - 50)
+    hidden_pos[1] = random.randint(50, SCREEN_SIZE[1] - 50)
 
-hidden_posx = 100
-hidden_posy = 100
-
-
-#game data that can change values
-
-game = {
-    'circle_size': 50,
-    'move size': 50,
-    'prev_x': 0,
-    'prev_y': 0,
-    'user_x': SCREEN_SIZE / 2,
-    'user_y': SCREEN_SIZE/2,
-    'hidden_x': 0,
-    'hidden_y': 0,
-    'user_color': WHITE,
-    'hidden_color': BLACK,
-    'num_moves': 0
-}
-
+# Function to play the game
 def play_game():
-    """..."""
-    global game
+    global user_pos, user_color
+    run_game = True
 
-    running = True
-
-
-    while True:
+    while run_game:
         clock.tick(fps_limit)
-
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                run_game = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    user_pos[0] -= 10
+                elif event.key == pygame.K_RIGHT:
+                    user_pos[0] += 10
+                elif event.key == pygame.K_UP:
+                    user_pos[1] -= 10
+                elif event.key == pygame.K_DOWN:
+                    user_pos[1] += 10
 
+        # Calculate distance between user's circle and hidden circle
+        distance = math.sqrt((user_pos[0] - hidden_pos[0]) ** 2 + (user_pos[1] - hidden_pos[1]) ** 2)
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                posx -= 10
+        # Adjust user's circle color based on distance from the hidden circle
+        if distance < 50:
+            user_color = GREEN
+        elif distance < 100:
+            user_color = RED
+        else:
+            user_color = BLUE
 
-            if event.key == pygame.K_RIGHT:
-                posx += 10
+        # Fill the screen with black
+        screen.fill(BLACK)
 
-            if event.key == pygame.K_UP:
-                posy += 10
+        # Draw circles
+        pygame.draw.circle(screen, user_color, user_pos, circle_size)
+        pygame.draw.circle(screen, WHITE, hidden_pos, circle_size)
 
-            if event.key == pygame.K_DOWN:
-                posy -=10
+        pygame.display.flip()
 
-        screen.fill(black)
+# Function to start the game
+def start_game():
+    set_hidden_location()
+    play_game()
 
-        pygame.draw.circle(screen,colorcircle, (posx,posy), 50)
-          pygame.display.flip()
-    pygame.quit()
+# Main game loop
+def main():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    start_game()
+
+        screen.fill(BLACK)
+        pygame.display.flip()
+
+if __name__ == '__main__':
+    start_game()
+    main()
