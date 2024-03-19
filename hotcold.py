@@ -1,8 +1,20 @@
-import math
 import sys
 import pygame
 import pygame_menu
 import random
+'''
+ scripted level docstring (https://github.com/hamimshafin/hotcoldgame)
+ imports random, pygame, pygame_menu
+dunders (metadata) for the authorship information (example):
+__author__ = 'Hamim Shafin'
+__version__ = '1.0'
+__date__ = '2024.03.18'
+__status__ = 'Development'
+ global variables
+ functions arrange in a logical order based on usage
+ main function
+ if __name__ = "main"
+'''
 
 # Define colors
 BLACK = (0, 0, 0)
@@ -51,6 +63,9 @@ def play_game():
             if event.type == pygame.QUIT:
                 run_game = False
             if event.type == pygame.KEYDOWN:
+                previous_x = game['user_posx']
+                previous_y = game['user_posy']
+
                 if event.key == pygame.K_LEFT:
                     game['user_posx'] -= 20
                     game['num_moves'] += 1  # Increment move counter
@@ -88,8 +103,6 @@ def play_game():
                 else:
                     user_color = BLUE
 
-            previous_x = game['user_posx']
-            previous_y = game['user_posy']
 
             game['user_circle_color'] = user_color
             game['hidden_circle_color'] = hidden_color
@@ -174,6 +187,7 @@ def display_menu():
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(SCREEN)
 
+# Function to play music
 def play_music():
    pygame.mixer.init()
    pygame.mixer_music.load('Meet & Fun! - Ofshane.mp3')
