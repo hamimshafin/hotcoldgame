@@ -1,4 +1,4 @@
-# Student Record System
+# Hot/Cold Game
 Author :Hamim Shafin
 
 It's a "Hot/Cold" game where the player aims to find a hidden object by moving around a screen. 
