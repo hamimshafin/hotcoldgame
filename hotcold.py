@@ -27,11 +27,20 @@ game = {
     'hidden_posy': 0,
     'user_circle_color': WHITE,
     'hidden_circle_color': BLACK,
-    'num_moves': 0
+    'num_moves': 0,
+    'debug_mode': False
 }
+
+# Previous positions and colors
+previous_x = game['user_posx']
+previous_y = game['user_posy']
+user_color = game['user_circle_color']
+hidden_color = game['hidden_circle_color']
+
 
 # Function to play the game
 def play_game():
+    global previous_x, previous_y, user_color, hidden_color
     clock = pygame.time.Clock()
     run_game = True
 
@@ -43,30 +52,56 @@ def play_game():
                 run_game = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    game['user_posx'] -= 10
+                    game['user_posx'] -= 20
+                    game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_RIGHT:
-                    game['user_posx'] += 10
+                    game['user_posx'] += 20
+                    game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_UP:
-                    game['user_posy'] -= 10
+                    game['user_posy'] -= 20
+                    game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_DOWN:
-                    game['user_posy'] += 10
+                    game['user_posy'] += 20
+                    game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_r:
                     set_hidden_location()
                     game['user_circle_color'] = BLUE
+                elif event.key == pygame.K_d:
+                    debug_mode_toggle()
 
-        distance = math.sqrt((game['user_posx'] - game['hidden_posx']) ** 2 +
-                             (game['user_posy'] - game['hidden_posy']) ** 2)
+        overlap = game['circle_size'] * 2 - 10
 
-        if distance < 100:
-            game['user_circle_color'] = RED
-        elif distance < game['circle_size']:
-            game['user_circle_color'] = GREEN
+        if abs(game['user_posx'] - game['hidden_posx']) < overlap and abs(game['user_posy'] - game['hidden_posy']) < overlap:
+            hidden_color = GREEN
+            user_color = GREEN
+
         else:
-            game['user_circle_color'] = BLUE
+            if previous_x != game['user_posx']:
+                if abs(previous_x - game['hidden_posx']) > abs(game['user_posx'] - game['hidden_posx']):
+                    user_color = RED
+                else:
+                    user_color = BLUE
+
+            if previous_y != game['user_posy']:
+                if abs(previous_y - game['hidden_posy']) > abs(game['user_posy'] - game['hidden_posy']):
+                    user_color = RED
+                else:
+                    user_color = BLUE
+
+            previous_x = game['user_posx']
+            previous_y = game['user_posy']
+
+            game['user_circle_color'] = user_color
+            game['hidden_circle_color'] = hidden_color
 
         SCREEN.fill(BLACK)
         pygame.draw.circle(SCREEN, game['user_circle_color'], (game['user_posx'], game['user_posy']), game['circle_size'])
-        pygame.draw.circle(SCREEN, game['hidden_circle_color'], (game['hidden_posx'], game['hidden_posy']), game['circle_size'])
+
+        if game['debug_mode']:
+            pygame.draw.circle(SCREEN, WHITE, (game['hidden_posx'], game['hidden_posy']), game['circle_size'])
+
+        # Display Instructions
+        display_instructions()
 
         pygame.display.flip()
 
@@ -86,6 +121,31 @@ def set_hidden_location():
             game['hidden_posx'] = x
             game['hidden_posy'] = y
             return
+
+def debug_mode_toggle():
+    game['debug_mode'] = not game['debug_mode']
+
+def debug():
+    global game
+    pygame.init()
+
+    # creating a running loop
+    while True:
+
+        # creating a loop to check events that
+        # are occurring
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # checking if keydown event happened or not
+            if event.type == pygame.KEYDOWN:
+                # if keydown event happened
+                if event.key == pygame.K_d:
+                     set_hidden_location()
+                # than printing a string to output
+                print("A key has been pressed")
 
 # Function to display instructions
 def display_instructions():
@@ -114,12 +174,19 @@ def display_menu():
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(SCREEN)
 
+def play_music():
+   pygame.mixer.init()
+   pygame.mixer_music.load('Meet & Fun! - Ofshane.mp3')
+   pygame.mixer.music.set_volume(0.5)
+   pygame.mixer.music.play(loops= -1)
 
 # Main function
 def main():
+    play_music()
     pygame.init()
     display_menu()
     pygame.quit()
 
 if __name__ == "__main__":
     main()
+
