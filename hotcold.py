@@ -2,6 +2,8 @@ import sys
 import pygame
 import pygame_menu
 import random
+import pygame.mixer
+
 '''
  scripted level docstring (https://github.com/hamimshafin/hotcoldgame)
  imports random, pygame, pygame_menu
@@ -27,7 +29,6 @@ YELLOW = (255, 233, 0)
 # Define screen size
 SCREEN_SIZE = 800
 SCREEN = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
-pygame.display.set_caption('Hot Cold Game')
 
 # Define game data
 game = {
@@ -37,22 +38,18 @@ game = {
     'user_posy': SCREEN_SIZE // 2,
     'hidden_posx': 0,
     'hidden_posy': 0,
-    'user_circle_color': WHITE,
-    'hidden_circle_color': BLACK,
+    'previous_x': SCREEN_SIZE // 2,  # Initialize with starting position
+    'previous_y': SCREEN_SIZE // 2,  # Initialize with starting position
+    'user_color': WHITE,
+    'hidden_color': BLACK,
     'num_moves': 0,
     'debug_mode': False
 }
 
-# Previous positions and colors
-previous_x = game['user_posx']
-previous_y = game['user_posy']
-user_color = game['user_circle_color']
-hidden_color = game['hidden_circle_color']
-
 
 # Function to play the game
 def play_game():
-    global previous_x, previous_y, user_color, hidden_color
+    global game
     clock = pygame.time.Clock()
     run_game = True
 
@@ -63,9 +60,8 @@ def play_game():
             if event.type == pygame.QUIT:
                 run_game = False
             if event.type == pygame.KEYDOWN:
-                previous_x = game['user_posx']
-                previous_y = game['user_posy']
-
+                game['previous_x'] = game['user_posx']
+                game['previous_y'] = game['user_posy']
                 if event.key == pygame.K_LEFT:
                     game['user_posx'] -= 20
                     game['num_moves'] += 1  # Increment move counter
@@ -79,37 +75,15 @@ def play_game():
                     game['user_posy'] += 20
                     game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_r:
-                    set_hidden_location()
-                    game['user_circle_color'] = BLUE
+                    reset_game()
                 elif event.key == pygame.K_d:
                     debug_mode_toggle()
 
-        overlap = game['circle_size'] * 2 - 10
-
-        if abs(game['user_posx'] - game['hidden_posx']) < overlap and abs(game['user_posy'] - game['hidden_posy']) < overlap:
-            hidden_color = GREEN
-            user_color = GREEN
-
-        else:
-            if previous_x != game['user_posx']:
-                if abs(previous_x - game['hidden_posx']) > abs(game['user_posx'] - game['hidden_posx']):
-                    user_color = RED
-                else:
-                    user_color = BLUE
-
-            if previous_y != game['user_posy']:
-                if abs(previous_y - game['hidden_posy']) > abs(game['user_posy'] - game['hidden_posy']):
-                    user_color = RED
-                else:
-                    user_color = BLUE
-
-
-            game['user_circle_color'] = user_color
-            game['hidden_circle_color'] = hidden_color
+        set_circle_colors()
 
         SCREEN.fill(BLACK)
-        pygame.draw.circle(SCREEN, game['user_circle_color'], (game['user_posx'], game['user_posy']), game['circle_size'])
-
+        pygame.draw.circle(SCREEN, game['user_color'], (game['user_posx'], game['user_posy']),
+                           game['circle_size'])
         if game['debug_mode']:
             pygame.draw.circle(SCREEN, WHITE, (game['hidden_posx'], game['hidden_posy']), game['circle_size'])
 
@@ -117,6 +91,30 @@ def play_game():
         display_instructions()
 
         pygame.display.flip()
+
+
+# Function to set_circle colors
+def set_circle_colors():
+    overlap = game['circle_size'] * 2 - 10
+
+    if abs(game['user_posx'] - game['hidden_posx']) < overlap and abs(
+            game['user_posy'] - game['hidden_posy']) < overlap:
+        game['hidden_color'] = GREEN
+        game['user_color'] = GREEN
+
+    else:
+        if game['previous_x'] != game['user_posx']:
+            if abs(game['previous_x'] - game['hidden_posx']) > abs(game['user_posx'] - game['hidden_posx']):
+                game['user_color'] = RED
+            else:
+                game['user_color'] = BLUE
+
+        if game['previous_y'] != game['user_posy']:
+            if abs(game['previous_y'] - game['hidden_posy']) > abs(game['user_posy'] - game['hidden_posy']):
+                game['user_color'] = RED
+            else:
+                game['user_color'] = BLUE
+
 
 # Function to set the hidden circle location
 def set_hidden_location():
@@ -135,30 +133,19 @@ def set_hidden_location():
             game['hidden_posy'] = y
             return
 
+
+def reset_game():
+    game['num_moves'] = 0
+    game['user_color'] = WHITE
+    game['user_posx'] = SCREEN_SIZE // 2
+    game['user_posy'] = SCREEN_SIZE // 2
+    set_hidden_location()
+    game['user_color'] = BLUE
+
+
 def debug_mode_toggle():
-    game['debug_mode'] = not game['debug_mode']
-
-def debug():
     global game
-    pygame.init()
-
-    # creating a running loop
-    while True:
-
-        # creating a loop to check events that
-        # are occurring
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            # checking if keydown event happened or not
-            if event.type == pygame.KEYDOWN:
-                # if keydown event happened
-                if event.key == pygame.K_d:
-                     set_hidden_location()
-                # than printing a string to output
-                print("A key has been pressed")
+    game['debug_mode'] = not game['debug_mode']
 
 # Function to display instructions
 def display_instructions():
@@ -170,6 +157,7 @@ def display_instructions():
     reset_text = font.render('Reset : r', True, YELLOW)
     SCREEN.blit(reset_text, (20, 60))
 
+
 # Function to set difficulty level
 def set_difficulty(level, difficulty):
     if difficulty == 3:
@@ -179,6 +167,7 @@ def set_difficulty(level, difficulty):
     else:
         game['circle_size'], game['move_size'] = (50, 50)
 
+
 # Function to display the menu
 def display_menu():
     menu = pygame_menu.Menu('Hot/Cold Game', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
@@ -187,20 +176,23 @@ def display_menu():
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(SCREEN)
 
+
 # Function to play music
 def play_music():
-   pygame.mixer.init()
-   pygame.mixer_music.load('Meet & Fun! - Ofshane.mp3')
-   pygame.mixer.music.set_volume(0.5)
-   pygame.mixer.music.play(loops= -1)
+    pygame.mixer.init()
+    pygame.mixer_music.load('Meet & Fun! - Ofshane.mp3')
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(loops=-1)
+
 
 # Main function
 def main():
     play_music()
+    pygame.display.set_caption('Hot Cold Game')
     pygame.init()
     display_menu()
     pygame.quit()
 
+
 if __name__ == "__main__":
     main()
-
