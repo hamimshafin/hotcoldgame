@@ -1,4 +1,3 @@
-import sys
 import pygame
 import pygame_menu
 import random
@@ -43,7 +42,6 @@ game = {
     'user_color': WHITE,
     'hidden_color': BLACK,
     'num_moves': 0,
-    'debug_mode': False
 }
 
 
@@ -84,8 +82,8 @@ def play_game():
         SCREEN.fill(BLACK)
         pygame.draw.circle(SCREEN, game['user_color'], (game['user_posx'], game['user_posy']),
                            game['circle_size'])
-        if game['debug_mode']:
-            pygame.draw.circle(SCREEN, WHITE, (game['hidden_posx'], game['hidden_posy']), game['circle_size'])
+
+        pygame.draw.circle(SCREEN, game['hidden_color'], (game['hidden_posx'], game['hidden_posy']), game['circle_size'])
 
         # Display Instructions
         display_instructions()
@@ -95,6 +93,7 @@ def play_game():
 
 # Function to set_circle colors
 def set_circle_colors():
+    global game
     overlap = game['circle_size'] * 2 - 10
 
     if abs(game['user_posx'] - game['hidden_posx']) < overlap and abs(
@@ -116,8 +115,13 @@ def set_circle_colors():
                 game['user_color'] = BLUE
 
 
+game['previous_x'] = game['user_posx']
+game['previous_x'] = game['user_posy']
+
+
 # Function to set the hidden circle location
 def set_hidden_location():
+    global game
     inside_dist = game['circle_size']
     outside_dist = SCREEN_SIZE - game['circle_size']
 
@@ -135,6 +139,7 @@ def set_hidden_location():
 
 
 def reset_game():
+    global game
     game['num_moves'] = 0
     game['user_color'] = WHITE
     game['user_posx'] = SCREEN_SIZE // 2
@@ -145,7 +150,13 @@ def reset_game():
 
 def debug_mode_toggle():
     global game
-    game['debug_mode'] = not game['debug_mode']
+
+    if game['hidden_color'] == BLACK:
+        game['hidden_color'] = WHITE
+    else:
+        game['hidden_color'] = BLACK
+
+    play_game()
 
 
 # Function to display instructions
