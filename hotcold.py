@@ -99,7 +99,7 @@ def set_circle_colors():
 
     if abs(game['user_posx'] - game['hidden_posx']) < overlap and abs(
             game['user_posy'] - game['hidden_posy']) < overlap:
-        game['hidden_color'] = GREEN
+        game['hidden_color'] = YELLOW
         game['user_color'] = GREEN
 
     else:
@@ -146,6 +146,7 @@ def reset_game():
 def debug_mode_toggle():
     global game
     game['debug_mode'] = not game['debug_mode']
+
 
 # Function to display instructions
 def display_instructions():

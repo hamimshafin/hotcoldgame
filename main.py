@@ -15,6 +15,8 @@ pygame.init()
 # Set up the screen
 SCREEN_SIZE = (800, 600)
 screen = pygame.display.set_mode(SCREEN_SIZE)
+SCREEN = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
+
 pygame.display.set_caption('Hot Cold Game')
 
 # Set up the clock
@@ -77,6 +79,14 @@ def play_game():
 def start_game():
     set_hidden_location()
     play_game()
+def set_difficulty
+
+def display_menu():
+    menu = pygame.menu.Menu('Hot/Cold Game', 400, 300, theme=pygame.menu.themes.THEME_BLUE)
+    menu.add.selector('Difficulty :', [('Level 1', 1), ('Level 2', 2), ('Level 3', 3)], onchange=set_difficulty)
+    menu.add.button('Play', play_game)
+    menu.add.button('Quit', pygame.menu.events.EXIT)
+    menu.mainloop(SCREEN)
 
 # Main game loop
 def main():
