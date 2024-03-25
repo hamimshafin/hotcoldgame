@@ -1,7 +1,8 @@
 import pygame
 import pygame_menu
-import random
 import pygame.mixer
+import random
+
 
 '''
  scripted level docstring (https://github.com/hamimshafin/hotcoldgame)
@@ -11,10 +12,6 @@ __author__ = 'Hamim Shafin'
 __version__ = '1.0'
 __date__ = '2024.03.18'
 __status__ = 'Development'
- global variables
- functions arrange in a logical order based on usage
- main function
- if __name__ = "main"
 '''
 
 # Define colors
@@ -44,6 +41,9 @@ game = {
     'num_moves': 0,
 }
 
+'''
+This function has the control of the game. Where you can move the user circle to find the hidden circle
+'''
 
 # Function to play the game
 def play_game():
@@ -83,12 +83,29 @@ def play_game():
         pygame.draw.circle(SCREEN, game['user_color'], (game['user_posx'], game['user_posy']),
                            game['circle_size'])
 
-        pygame.draw.circle(SCREEN, game['hidden_color'], (game['hidden_posx'], game['hidden_posy']), game['circle_size'])
+        pygame.draw.circle(SCREEN, game['hidden_color'], (game['hidden_posx'], game['hidden_posy']),
+                           game['circle_size'])
 
         # Display Instructions
         display_instructions()
 
         pygame.display.flip()
+
+
+"""
+    set the amount the user's circle must overlap by the dimension of both circles added together minus 10
+    if the circle overlap
+        then set both circles to different green colors
+    else
+        if the user's circle x location has changed then determine if they are closer or further away from previous x
+            if previous x distance is less than current x distance
+            then set red else blue
+        if the user's circle y location has changed then determine if they are closer or further away from previous y
+            if previous y distance is less than current y distance
+            then set red else blue
+    store the current x, y to previous x, y to get ready for the new user's move
+    :return: None
+    """
 
 
 # Function to set_circle colors
@@ -119,6 +136,11 @@ game['previous_x'] = game['user_posx']
 game['previous_x'] = game['user_posy']
 
 
+'''
+This is the function that hides the circle in random positions.
+
+'''
+
 # Function to set the hidden circle location
 def set_hidden_location():
     global game
@@ -137,6 +159,11 @@ def set_hidden_location():
             game['hidden_posy'] = y
             return
 
+'''
+
+You can reset the circle to the position that was at the start.
+
+'''
 
 def reset_game():
     global game
@@ -148,6 +175,13 @@ def reset_game():
     game['user_color'] = BLUE
 
 
+"""
+    Toggles debug mode making it easier to test the game.
+    If the hidden circle color is black (same as the background) change it to white otherwise change it back to black.
+    :return: None
+    """
+
+
 def debug_mode_toggle():
     global game
 
@@ -157,6 +191,13 @@ def debug_mode_toggle():
         game['hidden_color'] = BLACK
 
     play_game()
+
+'''
+
+This function displays the texts in game and this is how we can write the texts and select 
+the font we like.
+
+'''
 
 
 # Function to display instructions
@@ -170,6 +211,12 @@ def display_instructions():
     SCREEN.blit(reset_text, (20, 60))
 
 
+'''
+This is where you can set the difficulty for the game. 
+The circle can modified because of this function.
+'''
+
+
 # Function to set difficulty level
 def set_difficulty(level, difficulty):
     if difficulty == 3:
@@ -178,6 +225,13 @@ def set_difficulty(level, difficulty):
         game['circle_size'], game['move_size'] = (25, 25)
     else:
         game['circle_size'], game['move_size'] = (50, 50)
+
+
+"""
+Display the current total number of user's moves
+and game's instruction on the screen in the upper left-hand corner
+:return: None
+"""
 
 
 # Function to display the menu
@@ -189,12 +243,24 @@ def display_menu():
     menu.mainloop(SCREEN)
 
 
+'''
+
+This function plays the music in game
+
+'''
+
+
 # Function to play music
 def play_music():
     pygame.mixer.init()
     pygame.mixer_music.load('Meet & Fun! - Ofshane.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(loops=-1)
+
+
+'''
+This is the main function 
+'''
 
 
 # Main function
