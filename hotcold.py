@@ -3,16 +3,31 @@ import pygame_menu
 import pygame.mixer
 import random
 
+'''
+The Hot/Cold Game
 
+The user has to try to find a hidden circle using his circle to move around the screen.
+The game's objective is to see how many moves it takes you to find a hidden circle
+on the screen using another circle to navigate.
+
+The hidden circle (same color as the screen background) will be randomly placed on the screen
+
+The user’s circle will always start in the center of the screen
+
+Allow the user to select the difficulty of the game by controlling the size of the circle
+and the distance it moves on each attempt
+
+The user’s circle will be red (hot) when getting closer or blue (cold) when getting further away from the hidden circle
+
+The game has the following key options:
+Up, Down, Left, and Right arrows
+D = Toggle debug mode (displays the display the hidden circle)
+R = Reset the game
 '''
- scripted level docstring (https://github.com/hamimshafin/hotcoldgame)
- imports random, pygame, pygame_menu
-dunders (metadata) for the authorship information (example):
-__author__ = 'Hamim Shafin'
-__version__ = '1.0'
-__date__ = '2024.03.18'
-__status__ = 'Development'
-'''
+__author__ = 'HamimShafin'
+__version__ = '2.0'
+__copyright__ = "No Copyright"
+__github__ = "https://github.com/hamimshafin/hotcoldgame"
 
 # Define colors
 BLACK = (0, 0, 0)
@@ -41,9 +56,6 @@ game = {
     'num_moves': 0,
 }
 
-'''
-This function has the control of the game. Where you can move the user circle to find the hidden circle
-'''
 
 # Function to play the game
 def play_game():
@@ -62,20 +74,17 @@ def play_game():
                 game['previous_y'] = game['user_posy']
                 if event.key == pygame.K_LEFT:
                     game['user_posx'] -= 20
-                    game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_RIGHT:
                     game['user_posx'] += 20
-                    game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_UP:
                     game['user_posy'] -= 20
-                    game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_DOWN:
                     game['user_posy'] += 20
-                    game['num_moves'] += 1  # Increment move counter
                 elif event.key == pygame.K_r:
                     reset_game()
                 elif event.key == pygame.K_d:
                     debug_mode_toggle()
+                game['num_moves'] += 1  # Increment move counter
 
         set_circle_colors()
 
@@ -91,21 +100,13 @@ def play_game():
 
         pygame.display.flip()
 
+'''
+This function has the control of the game. Where you can move the user circle to find the hidden circle
+'''
 
-"""
-    set the amount the user's circle must overlap by the dimension of both circles added together minus 10
-    if the circle overlap
-        then set both circles to different green colors
-    else
-        if the user's circle x location has changed then determine if they are closer or further away from previous x
-            if previous x distance is less than current x distance
-            then set red else blue
-        if the user's circle y location has changed then determine if they are closer or further away from previous y
-            if previous y distance is less than current y distance
-            then set red else blue
-    store the current x, y to previous x, y to get ready for the new user's move
-    :return: None
-    """
+
+
+
 
 
 # Function to set_circle colors
@@ -135,11 +136,22 @@ def set_circle_colors():
 game['previous_x'] = game['user_posx']
 game['previous_x'] = game['user_posy']
 
+"""
+    set the amount the user's circle must overlap by the dimension of both circles added together minus 10
+    if the circle overlap
+        then set both circles to different green colors
+    else
+        if the user's circle x location has changed then determine if they are closer or further away from previous x
+            if previous x distance is less than current x distance
+            then set red else blue
+        if the user's circle y location has changed then determine if they are closer or further away from previous y
+            if previous y distance is less than current y distance
+            then set red else blue
+    store the current x, y to previous x, y to get ready for the new user's move
+    :return: None
+    """
 
-'''
-This is the function that hides the circle in random positions.
 
-'''
 
 # Function to set the hidden circle location
 def set_hidden_location():
@@ -159,11 +171,12 @@ def set_hidden_location():
             game['hidden_posy'] = y
             return
 
-'''
-
-You can reset the circle to the position that was at the start.
 
 '''
+This is the function that hides the circle in random positions.
+
+'''
+
 
 def reset_game():
     global game
@@ -174,12 +187,13 @@ def reset_game():
     set_hidden_location()
     game['user_color'] = BLUE
 
+'''
 
-"""
-    Toggles debug mode making it easier to test the game.
-    If the hidden circle color is black (same as the background) change it to white otherwise change it back to black.
-    :return: None
-    """
+You can reset the circle to the position that was at the start.
+
+'''
+
+
 
 
 def debug_mode_toggle():
@@ -192,12 +206,13 @@ def debug_mode_toggle():
 
     play_game()
 
-'''
+"""
+    Toggles debug mode making it easier to test the game.
+    If the hidden circle color is black (same as the background) change it to white otherwise change it back to black.
+    :return: None
+    """
 
-This function displays the texts in game and this is how we can write the texts and select 
-the font we like.
 
-'''
 
 
 # Function to display instructions
@@ -210,11 +225,13 @@ def display_instructions():
     reset_text = font.render('Reset : r', True, YELLOW)
     SCREEN.blit(reset_text, (20, 60))
 
+'''
+
+This function displays the texts in game and this is how we can write the texts and select 
+the font we like.
 
 '''
-This is where you can set the difficulty for the game. 
-The circle can modified because of this function.
-'''
+
 
 
 # Function to set difficulty level
@@ -226,12 +243,12 @@ def set_difficulty(level, difficulty):
     else:
         game['circle_size'], game['move_size'] = (50, 50)
 
+'''
+This is where you can set the difficulty for the game. 
+The circle can modified because of this function.
+'''
 
-"""
-Display the current total number of user's moves
-and game's instruction on the screen in the upper left-hand corner
-:return: None
-"""
+
 
 
 # Function to display the menu
@@ -242,12 +259,12 @@ def display_menu():
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(SCREEN)
 
+"""
+Display the current total number of user's moves
+and game's instruction on the screen in the upper left-hand corner
+:return: None
+"""
 
-'''
-
-This function plays the music in game
-
-'''
 
 
 # Function to play music
@@ -257,10 +274,13 @@ def play_music():
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(loops=-1)
 
+'''
+
+This function plays the music in game
 
 '''
-This is the main function 
-'''
+
+
 
 
 # Main function
@@ -271,6 +291,9 @@ def main():
     display_menu()
     pygame.quit()
 
+'''
+This is the main function 
+'''
 
 if __name__ == "__main__":
     main()
