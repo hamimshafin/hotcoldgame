@@ -59,6 +59,10 @@ game = {
 
 # Function to play the game
 def play_game():
+    '''
+    This function has the control of the game. Where you can move the user circle to find the hidden circle
+    '''
+
     global game
     clock = pygame.time.Clock()
     run_game = True
@@ -100,12 +104,24 @@ def play_game():
 
         pygame.display.flip()
 
-'''
-This function has the control of the game. Where you can move the user circle to find the hidden circle
-'''
 
 # Function to set_circle colors
 def set_circle_colors():
+    """
+        set the amount the user's circle must overlap by the dimension of both circles added together minus 10
+        if the circle overlap
+            then set both circles to different green colors
+        else
+            if the user's circle x location has changed then determine if they are closer or further away from previous x
+                if previous x distance is less than current x distance
+                then set red else blue
+            if the user's circle y location has changed then determine if they are closer or further away from previous y
+                if previous y distance is less than current y distance
+                then set red else blue
+        store the current x, y to previous x, y to get ready for the new user's move
+        :return: None
+        """
+
     global game
     overlap = game['circle_size'] * 2 - 10
 
@@ -130,25 +146,15 @@ def set_circle_colors():
 
 
 
-"""
-    set the amount the user's circle must overlap by the dimension of both circles added together minus 10
-    if the circle overlap
-        then set both circles to different green colors
-    else
-        if the user's circle x location has changed then determine if they are closer or further away from previous x
-            if previous x distance is less than current x distance
-            then set red else blue
-        if the user's circle y location has changed then determine if they are closer or further away from previous y
-            if previous y distance is less than current y distance
-            then set red else blue
-    store the current x, y to previous x, y to get ready for the new user's move
-    :return: None
-    """
 
 
 
 # Function to set the hidden circle location
 def set_hidden_location():
+    '''
+    This is the function that hides the circle in random positions.
+
+    '''
     global game
     inside_dist = game['circle_size']
     outside_dist = SCREEN_SIZE - game['circle_size']
@@ -166,11 +172,14 @@ def set_hidden_location():
             return
 
 
-'''
-This is the function that hides the circle in random positions.
 
-'''
 def reset_game():
+    '''
+
+    You can reset the circle to the position that was at the start.
+
+    '''
+
     global game
     game['num_moves'] = 0
     game['user_color'] = WHITE
@@ -179,13 +188,14 @@ def reset_game():
     set_hidden_location()
     game['user_color'] = BLUE
 
-'''
-
-You can reset the circle to the position that was at the start.
-
-'''
 
 def debug_mode_toggle():
+    """
+        Toggles debug mode making it easier to test the game.
+        If the hidden circle color is black (same as the background) change it to white otherwise change it back to black.
+        :return: None
+        """
+
     global game
 
     if game['hidden_color'] == BLACK:
@@ -195,17 +205,18 @@ def debug_mode_toggle():
 
     play_game()
 
-"""
-    Toggles debug mode making it easier to test the game.
-    If the hidden circle color is black (same as the background) change it to white otherwise change it back to black.
-    :return: None
-    """
 
 
 
 
 # Function to display instructions
 def display_instructions():
+    '''
+
+    This function displays the texts in game and this is how we can write the texts and select
+    the font we like.
+
+    '''
     font = pygame.font.SysFont(None, 24)
     line = font.render('# ' + str(game['num_moves']) + "moves", True, YELLOW)
     SCREEN.blit(line, (20, 20))
@@ -214,17 +225,17 @@ def display_instructions():
     reset_text = font.render('Reset : r', True, YELLOW)
     SCREEN.blit(reset_text, (20, 60))
 
-'''
 
-This function displays the texts in game and this is how we can write the texts and select 
-the font we like.
-
-'''
 
 
 
 # Function to set difficulty level
 def set_difficulty(level, difficulty):
+    '''
+    This is where you can set the difficulty for the game.
+    The circle can be modified because of this function.
+    '''
+
     if difficulty == 3:
         game['circle_size'], game['move_size'] = (10, 10)
     elif difficulty == 2:
@@ -232,57 +243,56 @@ def set_difficulty(level, difficulty):
     else:
         game['circle_size'], game['move_size'] = (50, 50)
 
-'''
-This is where you can set the difficulty for the game. 
-The circle can modified because of this function.
-'''
 
 
 
 
 # Function to display the menu
 def display_menu():
+    """
+    Display the current total number of user's moves
+    and game's instruction on the screen in the upper left-hand corner
+    :return: None
+    """
     menu = pygame_menu.Menu('Hot/Cold Game', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
     menu.add.selector('Difficulty :', [('Level 1', 1), ('Level 2', 2), ('Level 3', 3)], onchange=set_difficulty)
     menu.add.button('Play', play_game)
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(SCREEN)
 
-"""
-Display the current total number of user's moves
-and game's instruction on the screen in the upper left-hand corner
-:return: None
-"""
+
 
 
 
 # Function to play music
 def play_music():
+    '''
+
+    This function plays the music in game
+
+    '''
     pygame.mixer.init()
     pygame.mixer_music.load('Meet & Fun! - Ofshane.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(loops=-1)
 
-'''
 
-This function plays the music in game
-
-'''
 
 
 
 
 # Main function
 def main():
+    '''
+    This is the main function
+    '''
     play_music()
     pygame.display.set_caption('Hot Cold Game')
     pygame.init()
     display_menu()
     pygame.quit()
 
-'''
-This is the main function 
-'''
+
 
 if __name__ == "__main__":
     main()
