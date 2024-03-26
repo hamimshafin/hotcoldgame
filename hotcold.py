@@ -1,7 +1,8 @@
+import random
 import pygame
 import pygame_menu
 import pygame.mixer
-import random
+
 
 '''
 The Hot/Cold Game
@@ -56,7 +57,6 @@ game = {
     'num_moves': 0,
 }
 
-
 # Function to play the game
 def play_game():
     global game
@@ -73,13 +73,13 @@ def play_game():
                 game['previous_x'] = game['user_posx']
                 game['previous_y'] = game['user_posy']
                 if event.key == pygame.K_LEFT:
-                    game['user_posx'] -= 20
+                    game['user_posx'] -= game['move_size']
                 elif event.key == pygame.K_RIGHT:
-                    game['user_posx'] += 20
+                    game['user_posx'] += game['move_size']
                 elif event.key == pygame.K_UP:
-                    game['user_posy'] -= 20
+                    game['user_posy'] -= game['move_size']
                 elif event.key == pygame.K_DOWN:
-                    game['user_posy'] += 20
+                    game['user_posy'] += game['move_size']
                 elif event.key == pygame.K_r:
                     reset_game()
                 elif event.key == pygame.K_d:
@@ -103,11 +103,6 @@ def play_game():
 '''
 This function has the control of the game. Where you can move the user circle to find the hidden circle
 '''
-
-
-
-
-
 
 # Function to set_circle colors
 def set_circle_colors():
@@ -133,8 +128,7 @@ def set_circle_colors():
                 game['user_color'] = BLUE
 
 
-game['previous_x'] = game['user_posx']
-game['previous_x'] = game['user_posy']
+
 
 """
     set the amount the user's circle must overlap by the dimension of both circles added together minus 10
@@ -176,8 +170,6 @@ def set_hidden_location():
 This is the function that hides the circle in random positions.
 
 '''
-
-
 def reset_game():
     global game
     game['num_moves'] = 0
@@ -192,9 +184,6 @@ def reset_game():
 You can reset the circle to the position that was at the start.
 
 '''
-
-
-
 
 def debug_mode_toggle():
     global game
